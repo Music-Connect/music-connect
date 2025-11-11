@@ -1,9 +1,5 @@
 import Center from "../components/Center";
-<<<<<<< HEAD
 import Input from "../components/Input";
-=======
-import Imput from "../components/imput";
->>>>>>> 0e16b5d4aac91cf0d259091ec8f94bfc9d493539
 
 function Login() {
   return (
