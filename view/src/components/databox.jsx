@@ -1,3 +1,4 @@
+import { Link } from "react-router";
 function Databox({
   title,
   description,
@@ -5,10 +6,11 @@ function Databox({
   borderColor,
   textColor,
   hoverBorderColor,
+  nextPage,
 }) {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-      <div>
+    <>
+      <Link to={nextPage}>
         <div
           className={`
                   bg-black border-2 rounded-2xl p-8 flex flex-col items-center
@@ -22,8 +24,8 @@ function Databox({
           <h4 className={`text-2xl font-bold mb-2 ${textColor}`}>{title}</h4>
           <p className="text-zinc-400">{description}</p>
         </div>
-      </div>
-    </div>
+      </Link>
+    </>
   );
 }
 export default Databox;

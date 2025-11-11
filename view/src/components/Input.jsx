@@ -1,4 +1,4 @@
-function Inputs({ type, description, value, onChange }) {
+function Input({ type, description, value, onChange }) {
   return (
     <input
       type={type}
@@ -10,4 +10,4 @@ function Inputs({ type, description, value, onChange }) {
   );
 }
 
-export default Inputs;
+export default Input;
