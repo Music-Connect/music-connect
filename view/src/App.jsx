@@ -1,5 +1,4 @@
-
-import './App.css'
+import './assets/styles/App.css'
 import { BrowserRouter,Route } from 'react-router'
 import AppRouter from './routes'
 
