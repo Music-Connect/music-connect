@@ -1,16 +1,15 @@
 import mic from "../assets/images/microfone.svg";
 import headset from "../assets/images/headfone.svg";
 import Databox from "../components/databox";
-import Center from "../components/Center";
+import Center from "../components/layout/Center";
 import { Link } from "react-router";
+import Title from "../components/layout/Title";
 
 function ProfileSelector() {
   return (
     <Center>
       <span className="text-6xl font-bold mb-2 text-center">
-        <span className="bg-linear-to-r from-yellow-300 to-pink-400 text-transparent bg-clip-text">
-          Escolha seu perfil
-        </span>
+        <Title title={"Escolha seu perfil"} />
       </span>
 
       <p className="text-lg text-zinc-400 pt-10">
@@ -38,7 +37,7 @@ function ProfileSelector() {
       </div>
 
       <Link
-        to={"/home"}
+        to={"/login"}
         className="text-zinc-400 pt-10 hover:text-white transition-colors"
       >
         Já tem uma conta?{" "}
