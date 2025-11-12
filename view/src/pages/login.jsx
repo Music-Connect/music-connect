@@ -2,15 +2,17 @@ import { Link } from "react-router";
 import Center from "../components/Center";
 import Input from "../components/Input";
 import Title from "../components/Title";
-
+import { useState } from "react";
 function Login() {
   const [formLogin, setFormLogin] = useState({
     email: "",
     password: "",
   });
+  const [errorMessage, setErrorMessage] = useState("");
 
   const LoginSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     console.log(formLogin);
 
@@ -21,10 +23,9 @@ function Login() {
       );
     } catch (error) {
       console.log(error);
+      setErrorMessage("Email ou senha inválidos. Tente novamente.");
     }
   };
-  /* faltando retorno de token e validação,possui apenas o componente visual com a logica do form*/
-
   return (
     <Center>
       <Title title={"Music Connect"}></Title>
@@ -59,6 +60,18 @@ function Login() {
           Entrar
         </button>
       </form>
+      {errorMessage && (
+        <div className="w-full max-w-xl text-center mt-4 p-4 bg-red-900/20 border border-red-500 rounded-lg">
+          <p className="text-red-400 text-sm mb-2">{errorMessage}</p>
+          <Link
+            to={"/forgot-password"} // Crie uma rota para esta página
+            className="text-amber-400 hover:underline"
+          >
+            Esqueceu sua senha?
+          </Link>
+        </div>
+      )}
+
       <p className="text-1xl text-zinc-100 mt-2">
         Não Tem uma conta?{" "}
         <Link to={"/profileSelector"} className="text-amber-400">
