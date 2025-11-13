@@ -1,23 +1,13 @@
-function Infobox({
-  title,
-  description,
-  imageURL,
-  borderColor,
-  titleColor,
-  textColor,
-}) {
+const Infobox = ({ icon, title, description }) => {
   return (
-    <div
-      className={`border ${borderColor} rounded-xl p-6 flex flex-col items-center gap-6 bg-[#12031f]`}
-    >
-      <img src={imageURL} alt={title} className="w-16 h-16" />
+    <div className="border border-purple-600 rounded-lg p-6 flex flex-col gap-3">
+      <div className="text-5xl text-purple-400 mb-2">{icon}</div>
 
-      <div className="flex flex-wrap">
-        <h4 className={`${titleColor} text-xl font-bold mb-2`}>{title}</h4>
-        <p className={`${textColor} text-sm leading-relaxed`}>{description}</p>
-      </div>
+      <h3 className="text-xl font-bold text-white">{title}</h3>
+
+      <p className="text-sm text-gray-400">{description}</p>
     </div>
   );
-}
+};
 
 export default Infobox;

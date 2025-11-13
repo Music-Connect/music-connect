@@ -1,35 +1,19 @@
-import BemVindo from "../components/homeComponents/bemVindo";
+import BemVindo from "../components/homeComponents/BemVindo";
 import HomeCards from "../components/homeComponents/homeCards";
 import Center from "../components/layout/Center";
 import Title from "../components/layout/Title";
 import { Link } from "react-router";
+import Header from "../components/homeComponents/Header";
 
 function Home() {
   return (
-    <>
-      <nav className="flex justify-between items-center py-6 px-12 md:px-20 bg-black">
-        <Title title={"Music Connect"} />
-
-        <div className="flex space-x-8 text-white">
-          <Link
-            to="/profileSelector"
-            className="hover:text-purple-400 transition duration-300"
-          >
-            Criar conta
-          </Link>
-          <Link
-            to="/login"
-            className="hover:text-purple-400 transition duration-300"
-          >
-            Entrar
-          </Link>
-        </div>
-      </nav>
-      <BemVindo />
-      <Center>
-        <HomeCards />
-      </Center>
-    </>
+    <div className="min-h-screen bg-linear-to-b from-black to-purple-950 text-white font-sans">
+      <Header></Header>
+      <main>
+        <BemVindo />
+        <HomeCards></HomeCards>
+      </main>
+    </div>
   );
 }
 
