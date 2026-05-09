@@ -578,6 +578,7 @@ Music-Connect-Frontend/
 | `StoryBar` | Carrossel horizontal de stories com anel gradiente (não visto) |
 | `StoryViewer` | Viewer fullscreen com barras de progresso, auto-avanço, teclado |
 | `DashboardBanner` | Banner hero com CTA baseado no tipo de usuário |
+| `PasswordStrength` | Indicador visual de força de senha (4 segmentos), valida mín 8 chars + complexidade. Exporta `evaluatePassword()` para uso em validação de submit. |
 
 ### 6.4 API Client (`lib/api.ts`)
 

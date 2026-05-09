@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { authClient } from "@/lib/auth-client";
 import BackButton from "@/components/BackButton";
+import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import { useAuthStore } from "@/lib/store";
 import { AlertTriangle, ArrowRight } from "lucide-react";
 
@@ -51,6 +52,11 @@ export default function RegisterContractorPage() {
       return;
     }
 
+    if (evaluatePassword(formData.password).score < 2) {
+      setError("Escolha uma senha mais forte (mínimo 8 caracteres com letras e números).");
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -75,7 +81,7 @@ export default function RegisterContractorPage() {
           "User already exists": "Este email já está cadastrado.",
           "Email already exists": "Este email já está cadastrado.",
           "Invalid email or password": "Email ou senha inválidos.",
-          "Password is too short": "A senha deve ter no mínimo 6 caracteres.",
+          "Password is too short": "A senha deve ter no mínimo 8 caracteres.",
           "Invalid password": "Senha inválida.",
         };
         const msg = error.message
@@ -182,13 +188,14 @@ export default function RegisterContractorPage() {
                     type="password"
                     name="password"
                     id="password"
-                    placeholder="Mínimo 6 caracteres"
+                    placeholder="Mínimo 8 caracteres"
                     value={formData.password}
                     onChange={handleChange}
                     required
-                    minLength={6}
+                    minLength={8}
                     className={inputClass}
                   />
+                  <PasswordStrength password={formData.password} />
                 </div>
                 <div>
                   <label htmlFor="confirmarSenha" className={labelClass}>
