@@ -634,7 +634,9 @@ Se o cookie não existir → redireciona para `/login?redirect=/rota-original`.
 
 ### 6.7 Design System
 
-Tema **escuro** com gradientes vibrantes. Referência completa em `UI_SYSTEM.md`.
+Tema **escuro por padrão** com suporte a tema claro (toggle em `/settings` → aba Aparência). O `ThemeProvider` (`lib/theme.tsx`) aplica classe `.dark`/`.light` em `<html>`, persiste em `localStorage` (chave `music-connect:theme`) + cookie (`mc_theme`), e tem opção `system` que segue a preferência do dispositivo. Um script inline em `<head>` evita flash de tema errado antes do React hidratar.
+
+Tokens semânticos (`bg-bg`, `bg-bg-card`, `text-fg`, `border-border` etc.) estão em `app/globals.css` e expostos ao Tailwind via `@theme inline`. Sidebar, Header, dashboard e settings já usam tokens; demais páginas continuam com classes diretas (`bg-zinc-900/40`) e precisam ser migradas. Referência completa em `UI_SYSTEM.md`.
 
 **Cores principais:**
 | Token | Valor | Uso |

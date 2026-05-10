@@ -3,8 +3,17 @@
 import { useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/lib/store";
+import { ThemeProvider } from "@/lib/theme";
 
 export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <ThemeProvider>
+      <SessionProvider>{children}</SessionProvider>
+    </ThemeProvider>
+  );
+}
+
+function SessionProvider({ children }: { children: React.ReactNode }) {
   const { data: session, isPending } = authClient.useSession();
   const { setUser, setSessionLoaded } = useAuthStore();
 

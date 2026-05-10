@@ -6,26 +6,29 @@ import Link from "next/link";
 import { api, User } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/lib/store";
+import { useTheme, type Theme } from "@/lib/theme";
 import BackButton from "@/components/BackButton";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import { SettingsSkeleton } from "@/components/Skeleton";
-import { BarChart2, User as UserIcon, Lock, Bell, AlertTriangle, CheckCircle2 } from "lucide-react";
+import { BarChart2, User as UserIcon, Lock, Bell, AlertTriangle, CheckCircle2, Palette, Sun, Moon, Monitor } from "lucide-react";
 
 const inputClass =
-  "w-full rounded-xl border border-zinc-800/60 bg-zinc-900/50 px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none transition-all duration-200 focus:border-zinc-700 focus:bg-zinc-900/80 focus:ring-1 focus:ring-zinc-700/50 disabled:opacity-40 disabled:cursor-not-allowed";
+  "w-full rounded-xl border border-border bg-zinc-900/50 px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none transition-all duration-200 focus:border-zinc-700 focus:bg-zinc-900/80 focus:ring-1 focus:ring-zinc-700/50 disabled:opacity-40 disabled:cursor-not-allowed";
 const labelClass = "mb-1.5 block text-[13px] font-medium text-zinc-400";
 
-type Tab = "account" | "security" | "notifications";
+type Tab = "account" | "security" | "appearance" | "notifications";
 
 const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "account", label: "Conta", icon: <UserIcon size={16} /> },
   { id: "security", label: "Segurança", icon: <Lock size={16} /> },
+  { id: "appearance", label: "Aparência", icon: <Palette size={16} /> },
   { id: "notifications", label: "Notificações", icon: <Bell size={16} /> },
 ];
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user: storeUser, sessionLoaded } = useAuthStore();
+  const { theme, setTheme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -148,7 +151,7 @@ export default function SettingsPage() {
   if (!user) return null;
 
   return (
-    <div className="relative min-h-screen bg-black text-white">
+    <div className="relative min-h-screen bg-bg text-white">
       {/* Background blobs */}
       <div className="pointer-events-none fixed inset-0">
         <div className="absolute -top-40 -right-40 h-150 w-150 rounded-full bg-linear-to-bl from-fuchsia-600/6 to-transparent blur-3xl" />
@@ -156,7 +159,7 @@ export default function SettingsPage() {
       </div>
 
       {/* ── Sticky navbar ── */}
-      <header className="sticky top-0 z-40 border-b border-zinc-800/50 bg-black/70 backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-border bg-bg/70 backdrop-blur-xl">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3 sm:px-6">
           <div className="flex items-center gap-3">
             <BackButton href="/dashboard" />
@@ -169,13 +172,13 @@ export default function SettingsPage() {
           <div className="flex items-center gap-3">
             <button
               onClick={() => router.push("/dashboard")}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-zinc-800/60 bg-zinc-900/50 px-4 py-2 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-700 hover:text-white"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-border bg-zinc-900/50 px-4 py-2 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-700 hover:text-white"
             >
               <BarChart2 size={14} /> Dashboard
             </button>
             <button
               onClick={() => router.push("/profile")}
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-zinc-800/60 bg-zinc-900/50 px-4 py-2 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-700 hover:text-white"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-border bg-zinc-900/50 px-4 py-2 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-700 hover:text-white"
             >
               <UserIcon size={14} /> Perfil
             </button>
@@ -197,7 +200,7 @@ export default function SettingsPage() {
           <h1 className="text-3xl font-black tracking-tight text-white">
             Configurações
           </h1>
-          <p className="mt-1 text-sm text-zinc-500">
+          <p className="mt-1 text-sm text-fg-muted">
             Gerencie sua conta e preferências
           </p>
         </div>
@@ -216,7 +219,7 @@ export default function SettingsPage() {
                   className={`flex items-center gap-2.5 whitespace-nowrap rounded-xl px-4 py-2.5 text-sm font-medium transition-all duration-200 ${
                     activeTab === tab.id
                       ? "bg-zinc-800/80 text-white shadow-sm"
-                      : "text-zinc-500 hover:bg-zinc-900/60 hover:text-zinc-300"
+                      : "text-fg-muted hover:bg-zinc-900/60 hover:text-zinc-300"
                   }`}
                 >
                   <span className="flex items-center">{tab.icon}</span>
@@ -234,7 +237,7 @@ export default function SettingsPage() {
                 style={{ animationDelay: "120ms" }}
               >
                 {/* Profile summary */}
-                <div className="rounded-2xl border border-zinc-800/50 bg-zinc-900/40 p-6 backdrop-blur-sm">
+                <div className="rounded-2xl border border-border bg-bg-card p-6 backdrop-blur-sm">
                   <h2 className="mb-6 flex items-center gap-2 text-sm font-bold text-white">
                     Informações Pessoais
                     <span className="h-px flex-1 bg-zinc-800/60" />
@@ -249,7 +252,7 @@ export default function SettingsPage() {
                     </div>
                     <div>
                       <p className="font-bold text-white">{user.name}</p>
-                      <p className="text-xs text-zinc-500 capitalize">
+                      <p className="text-xs text-fg-muted capitalize">
                         {user.tipo_usuario}
                       </p>
                     </div>
@@ -346,12 +349,12 @@ export default function SettingsPage() {
                 className="fade-in-up space-y-6"
                 style={{ animationDelay: "120ms" }}
               >
-                <div className="rounded-2xl border border-zinc-800/50 bg-zinc-900/40 p-6 backdrop-blur-sm">
+                <div className="rounded-2xl border border-border bg-bg-card p-6 backdrop-blur-sm">
                   <h2 className="mb-2 flex items-center gap-2 text-sm font-bold text-white">
                     Alterar senha
                     <span className="h-px flex-1 bg-zinc-800/60" />
                   </h2>
-                  <p className="mb-5 text-sm text-zinc-500">
+                  <p className="mb-5 text-sm text-fg-muted">
                     Por segurança, você precisa informar a senha atual. Após alterar, suas outras sessões serão encerradas.
                   </p>
 
@@ -441,7 +444,7 @@ export default function SettingsPage() {
                   <h3 className="mb-2 text-sm font-bold text-red-400">
                     Zona de Perigo
                   </h3>
-                  <p className="text-sm text-zinc-500 mb-4">
+                  <p className="text-sm text-fg-muted mb-4">
                     A exclusão da conta é permanente e não pode ser desfeita.
                   </p>
                   <button className="rounded-xl border border-red-500/30 bg-red-500/10 px-5 py-2.5 text-sm font-medium text-red-400 transition-all hover:bg-red-500/20">
@@ -451,9 +454,58 @@ export default function SettingsPage() {
               </div>
             )}
 
+            {activeTab === "appearance" && (
+              <div
+                className="fade-in-up space-y-6"
+                style={{ animationDelay: "120ms" }}
+              >
+                <div className="rounded-2xl border border-border bg-bg-card p-6 backdrop-blur-sm">
+                  <h2 className="mb-2 flex items-center gap-2 text-sm font-bold text-fg">
+                    Aparência
+                    <span className="h-px flex-1 bg-border" />
+                  </h2>
+                  <p className="mb-5 text-sm text-fg-muted">
+                    Escolha o tema da interface. A opção &quot;Sistema&quot; segue a preferência do seu dispositivo.
+                  </p>
+
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+                    {(
+                      [
+                        { id: "light", label: "Claro", icon: <Sun size={18} /> },
+                        { id: "dark", label: "Escuro", icon: <Moon size={18} /> },
+                        { id: "system", label: "Sistema", icon: <Monitor size={18} /> },
+                      ] as { id: Theme; label: string; icon: React.ReactNode }[]
+                    ).map((opt) => {
+                      const active = theme === opt.id;
+                      return (
+                        <button
+                          key={opt.id}
+                          type="button"
+                          onClick={() => setTheme(opt.id)}
+                          className={`flex flex-col items-center gap-2 rounded-xl border px-4 py-5 text-sm transition-all ${
+                            active
+                              ? "border-fg bg-bg-elevated text-fg shadow-sm"
+                              : "border-border bg-bg-card text-fg-muted hover:border-border-strong hover:text-fg"
+                          }`}
+                          aria-pressed={active}
+                        >
+                          {opt.icon}
+                          <span className="font-medium">{opt.label}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <p className="mt-4 text-xs text-fg-subtle">
+                    A migração do tema claro para todas as páginas é incremental — algumas telas ainda só renderizam corretamente em escuro. Reportar inconsistências como bug.
+                  </p>
+                </div>
+              </div>
+            )}
+
             {activeTab === "notifications" && (
               <div className="fade-in-up" style={{ animationDelay: "120ms" }}>
-                <div className="rounded-2xl border border-zinc-800/50 bg-zinc-900/40 p-6 backdrop-blur-sm">
+                <div className="rounded-2xl border border-border bg-bg-card p-6 backdrop-blur-sm">
                   <h2 className="mb-6 flex items-center gap-2 text-sm font-bold text-white">
                     Notificações
                     <span className="h-px flex-1 bg-zinc-800/60" />

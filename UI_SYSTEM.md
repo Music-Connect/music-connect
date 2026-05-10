@@ -4,13 +4,30 @@ Design system de referência para reutilização de padrões visuais no frontend
 
 **Stack**: Next.js 16 · React 19 · Tailwind CSS v4 · Lucide React · TypeScript
 **Idioma**: pt-BR
-**Tema**: Dark (zinc + black base)
+**Tema**: Dark (default) com suporte a light via classe no `<html>`. Toggle em `/settings` → aba Aparência.
 
 ---
 
-## Tokens de Design
+## Tokens semânticos (preferir aos zinc/black hardcoded)
 
-### Paleta de Cores
+Definidos em `app/globals.css` como CSS variables, expostos ao Tailwind via `@theme inline`.
+**Páginas novas devem usar estas classes**, não `bg-black`/`bg-zinc-900` direto:
+
+| Token Tailwind | Uso | Dark | Light |
+|---|---|---|---|
+| `bg-bg` | fundo da página | `#0a0a0a` | `#fafafa` |
+| `bg-bg-card` | cards e containers | `zinc-900/40` | `white/85` |
+| `bg-bg-input` | inputs e selects | `zinc-900/50` | `white` |
+| `bg-bg-elevated` | hover, popovers, avatares | `#18181b` | `white` |
+| `text-fg` | texto primário | `#fafafa` | `#18181b` |
+| `text-fg-muted` | texto secundário | `#a1a1aa` | `#52525b` |
+| `text-fg-subtle` | texto auxiliar (uppercase eyebrows) | `#71717a` | `#71717a` |
+| `border-border` | bordas padrão | `zinc-800/60` | `zinc-200/90` |
+| `border-border-strong` | hover/focus | `#3f3f46` | `#d4d4d8` |
+
+**Migração incremental:** Sidebar, Header, dashboard e settings já usam tokens. Outras páginas continuam com classes diretas (`bg-zinc-900/40`, etc) — precisam ser migradas para o tema claro funcionar nelas. Em PRs novos, usar tokens diretamente.
+
+### Paleta legacy (em páginas ainda não migradas)
 
 ```
 Brand gradient:  from-amber-300 via-rose-400 to-fuchsia-500

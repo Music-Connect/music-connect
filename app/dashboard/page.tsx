@@ -48,7 +48,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`fade-in-up group relative overflow-hidden rounded-2xl border border-zinc-800/60 bg-zinc-900/50 backdrop-blur-sm p-5 transition-all duration-300 hover:border-zinc-700/80 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5`}
+      className={`fade-in-up group relative overflow-hidden rounded-2xl border border-border bg-zinc-900/50 backdrop-blur-sm p-5 transition-all duration-300 hover:border-zinc-700/80 hover:shadow-lg hover:shadow-black/20 hover:-translate-y-0.5`}
       style={{ animationDelay: delay }}
     >
       <div
@@ -56,14 +56,14 @@ function StatCard({
       />
       <div className="relative flex items-start justify-between">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wider text-zinc-500 mb-2">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-fg-muted mb-2">
             {label}
           </p>
           <p className="text-3xl font-black text-white tracking-tight tabular-nums">
             {value}
           </p>
           {sub && (
-            <p className="mt-1.5 text-[11px] text-zinc-500 leading-snug">
+            <p className="mt-1.5 text-[11px] text-fg-muted leading-snug">
               {sub}
             </p>
           )}
@@ -89,7 +89,7 @@ function ActivityBar({
   const pct = max > 0 ? Math.round((value / max) * 100) : 0;
   return (
     <div className="flex items-center gap-3">
-      <span className="w-8 text-right text-[11px] text-zinc-500 tabular-nums capitalize">
+      <span className="w-8 text-right text-[11px] text-fg-muted tabular-nums capitalize">
         {label}
       </span>
       <div className="flex-1 h-2 rounded-full bg-zinc-800/60 overflow-hidden">
@@ -98,7 +98,7 @@ function ActivityBar({
           style={{ width: `${pct}%` }}
         />
       </div>
-      <span className="w-6 text-[11px] text-zinc-500 tabular-nums">
+      <span className="w-6 text-[11px] text-fg-muted tabular-nums">
         {value}
       </span>
     </div>
@@ -118,7 +118,7 @@ function QuickAction({
   return (
     <button
       onClick={onClick}
-      className="group flex items-center gap-3 w-full rounded-xl border border-zinc-800/60 bg-zinc-900/40 px-4 py-3.5 text-left text-sm font-medium text-zinc-300 transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-800/60 hover:text-white hover:shadow-lg hover:shadow-black/10 active:scale-[0.98]"
+      className="group flex items-center gap-3 w-full rounded-xl border border-border bg-bg-card px-4 py-3.5 text-left text-sm font-medium text-zinc-300 transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-800/60 hover:text-white hover:shadow-lg hover:shadow-black/10 active:scale-[0.98]"
     >
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-zinc-800 text-zinc-400">
         {icon}
@@ -252,7 +252,7 @@ export default function DashboardPage() {
     }).format(v);
 
   return (
-    <div className="flex h-screen bg-black text-white font-sans overflow-hidden">
+    <div className="flex h-screen bg-bg text-white font-sans overflow-hidden">
       <Sidebar
         isArtist={isArtist}
         activePage="dashboard"
@@ -270,7 +270,7 @@ export default function DashboardPage() {
 
         <div className="p-6 lg:p-8 space-y-8">
           {/* ── Greeting Hero ── */}
-          <section className="fade-in-up relative overflow-hidden rounded-3xl border border-zinc-800/50 bg-linear-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 p-8 lg:p-10">
+          <section className="fade-in-up relative overflow-hidden rounded-3xl border border-border bg-linear-to-br from-zinc-900 via-zinc-900/95 to-zinc-950 p-8 lg:p-10">
             <div className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-linear-to-br from-amber-400/10 via-rose-500/10 to-fuchsia-600/10 blur-3xl" />
             <div className="pointer-events-none absolute -left-10 bottom-0 h-40 w-40 rounded-full bg-linear-to-tr from-emerald-500/8 to-cyan-500/5 blur-3xl" />
 
@@ -288,7 +288,7 @@ export default function DashboardPage() {
                     {user.name}
                   </span>
                 </h1>
-                <p className="mt-2 max-w-md text-sm leading-relaxed text-zinc-500">
+                <p className="mt-2 max-w-md text-sm leading-relaxed text-fg-muted">
                   {isArtist
                     ? "Acompanhe suas propostas, mantenha seu perfil atualizado e conquiste novos palcos."
                     : "Gerencie suas contratações, descubra novos talentos e faça eventos memoráveis."}
@@ -364,7 +364,7 @@ export default function DashboardPage() {
           {/* ── Middle Row: Activity + Quick Actions ── */}
           <section className="grid gap-6 lg:grid-cols-3">
             <div
-              className="fade-in-up lg:col-span-2 rounded-2xl border border-zinc-800/60 bg-zinc-900/40 p-6"
+              className="fade-in-up lg:col-span-2 rounded-2xl border border-border bg-bg-card p-6"
               style={{ animationDelay: "100ms" }}
             >
               <div className="mb-5 flex items-center justify-between">
@@ -372,7 +372,7 @@ export default function DashboardPage() {
                   <h3 className="text-sm font-bold text-white">
                     Atividade Recente
                   </h3>
-                  <p className="text-xs text-zinc-500">
+                  <p className="text-xs text-fg-muted">
                     Propostas nos últimos 6 meses
                   </p>
                 </div>
@@ -393,7 +393,7 @@ export default function DashboardPage() {
             </div>
 
             <div
-              className="fade-in-up rounded-2xl border border-zinc-800/60 bg-zinc-900/40 p-6"
+              className="fade-in-up rounded-2xl border border-border bg-bg-card p-6"
               style={{ animationDelay: "160ms" }}
             >
               <h3 className="mb-5 text-sm font-bold text-white">
@@ -458,7 +458,7 @@ export default function DashboardPage() {
               {proposals.length > 8 && (
                 <button
                   onClick={() => router.push("/proposals")}
-                  className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-500 transition-colors hover:text-white"
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-fg-muted transition-colors hover:text-white"
                 >
                   Ver todas <ArrowRight size={12} />
                 </button>

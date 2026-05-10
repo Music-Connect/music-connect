@@ -1,22 +1,70 @@
 @import "tailwindcss";
 
-:root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+/*
+  ── Tema (light/dark) ──
+  Default = dark (estética histórica do Music Connect).
+  A classe .light é aplicada em <html> pelo ThemeProvider quando o usuário escolhe.
+  Tokens semânticos: bg / bg-card / bg-input / fg / fg-muted / border / brand-*.
+  Páginas migradas usam classes Tailwind como `bg-bg`, `text-fg`, `border-border`.
+  Páginas ainda não migradas continuam com `bg-black`, `bg-zinc-900/40` etc — vão
+  parecer com o tema dark independente do toggle (migração incremental).
+*/
+
+:root,
+.dark {
+  --color-bg: #0a0a0a;
+  --color-bg-card: rgba(24, 24, 27, 0.4);
+  --color-bg-input: rgba(24, 24, 27, 0.5);
+  --color-bg-elevated: #18181b;
+  --color-fg: #fafafa;
+  --color-fg-muted: #a1a1aa;
+  --color-fg-subtle: #71717a;
+  --color-border: rgba(39, 39, 42, 0.6);
+  --color-border-strong: #3f3f46;
+  --color-scrollbar-thumb: #27272a;
+  --color-scrollbar-thumb-hover: #3f3f46;
+}
+
+.light {
+  --color-bg: #fafafa;
+  --color-bg-card: rgba(255, 255, 255, 0.85);
+  --color-bg-input: #ffffff;
+  --color-bg-elevated: #ffffff;
+  --color-fg: #18181b;
+  --color-fg-muted: #52525b;
+  --color-fg-subtle: #71717a;
+  --color-border: rgba(228, 228, 231, 0.9);
+  --color-border-strong: #d4d4d8;
+  --color-scrollbar-thumb: #d4d4d8;
+  --color-scrollbar-thumb-hover: #a1a1aa;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
+  --color-bg: var(--color-bg);
+  --color-bg-card: var(--color-bg-card);
+  --color-bg-input: var(--color-bg-input);
+  --color-bg-elevated: var(--color-bg-elevated);
+  --color-fg: var(--color-fg);
+  --color-fg-muted: var(--color-fg-muted);
+  --color-fg-subtle: var(--color-fg-subtle);
+  --color-border: var(--color-border);
+  --color-border-strong: var(--color-border-strong);
+}
+
+html,
+body {
+  background: var(--color-bg);
+  color: var(--color-fg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
   font-family:
     system-ui,
     -apple-system,
     sans-serif;
+  transition:
+    background-color 200ms ease,
+    color 200ms ease;
 }
 
 /* ── Animations ── */
@@ -65,12 +113,12 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
+  background: var(--color-scrollbar-thumb);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: var(--color-scrollbar-thumb-hover);
 }
 
 /* ── Utilities ── */
