@@ -4,10 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { api, User } from "@/lib/api";
+import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/lib/store";
 import BackButton from "@/components/BackButton";
+import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import { SettingsSkeleton } from "@/components/Skeleton";
-import { BarChart2, User as UserIcon, Lock, Bell } from "lucide-react";
+import { BarChart2, User as UserIcon, Lock, Bell, AlertTriangle, CheckCircle2 } from "lucide-react";
 
 const inputClass =
   "w-full rounded-xl border border-zinc-800/60 bg-zinc-900/50 px-4 py-3 text-sm text-white placeholder-zinc-600 outline-none transition-all duration-200 focus:border-zinc-700 focus:bg-zinc-900/80 focus:ring-1 focus:ring-zinc-700/50 disabled:opacity-40 disabled:cursor-not-allowed";
@@ -35,6 +37,16 @@ export default function SettingsPage() {
     cidade: "",
     estado: "",
   });
+
+  // Alterar senha
+  const [pwForm, setPwForm] = useState({
+    currentPassword: "",
+    newPassword: "",
+    confirmNewPassword: "",
+  });
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwError, setPwError] = useState("");
+  const [pwSuccess, setPwSuccess] = useState(false);
 
   useEffect(() => {
     if (!sessionLoaded) return;
@@ -80,6 +92,52 @@ export default function SettingsPage() {
       alert("Erro ao salvar configurações");
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPwError("");
+    setPwSuccess(false);
+
+    if (pwForm.newPassword !== pwForm.confirmNewPassword) {
+      setPwError("A nova senha e a confirmação não coincidem.");
+      return;
+    }
+
+    if (evaluatePassword(pwForm.newPassword).score < 2) {
+      setPwError("Escolha uma senha mais forte (mínimo 8 caracteres com letras e números).");
+      return;
+    }
+
+    if (pwForm.currentPassword === pwForm.newPassword) {
+      setPwError("A nova senha precisa ser diferente da atual.");
+      return;
+    }
+
+    setPwSaving(true);
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const { error } = await (authClient as any).changePassword({
+        currentPassword: pwForm.currentPassword,
+        newPassword: pwForm.newPassword,
+        revokeOtherSessions: true,
+      });
+
+      if (error) {
+        const mensagens: Record<string, string> = {
+          "Invalid password": "Senha atual incorreta.",
+          "Password is too short": "A nova senha deve ter no mínimo 8 caracteres.",
+        };
+        throw new Error(mensagens[error.message] ?? error.message ?? "Erro ao alterar senha.");
+      }
+
+      setPwSuccess(true);
+      setPwForm({ currentPassword: "", newPassword: "", confirmNewPassword: "" });
+    } catch (err: unknown) {
+      setPwError(err instanceof Error ? err.message : "Erro ao alterar senha.");
+    } finally {
+      setPwSaving(false);
     }
   };
 
@@ -289,16 +347,94 @@ export default function SettingsPage() {
                 style={{ animationDelay: "120ms" }}
               >
                 <div className="rounded-2xl border border-zinc-800/50 bg-zinc-900/40 p-6 backdrop-blur-sm">
-                  <h2 className="mb-6 flex items-center gap-2 text-sm font-bold text-white">
-                    Segurança
+                  <h2 className="mb-2 flex items-center gap-2 text-sm font-bold text-white">
+                    Alterar senha
                     <span className="h-px flex-1 bg-zinc-800/60" />
                   </h2>
-                  <p className="text-sm text-zinc-500 mb-4">
-                    Gerencie sua senha e configurações de segurança.
+                  <p className="mb-5 text-sm text-zinc-500">
+                    Por segurança, você precisa informar a senha atual. Após alterar, suas outras sessões serão encerradas.
                   </p>
-                  <button className="rounded-xl border border-zinc-800/60 bg-zinc-900/50 px-5 py-2.5 text-sm font-medium text-zinc-300 transition-all hover:border-zinc-700 hover:text-white">
-                    Alterar Senha
-                  </button>
+
+                  <form onSubmit={handleChangePassword} className="space-y-4">
+                    {pwError && (
+                      <div className="flex items-center gap-2 rounded-xl border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+                        <AlertTriangle size={16} />
+                        {pwError}
+                      </div>
+                    )}
+                    {pwSuccess && (
+                      <div className="flex items-center gap-2 rounded-xl border border-emerald-500/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-400">
+                        <CheckCircle2 size={16} />
+                        Senha alterada com sucesso.
+                      </div>
+                    )}
+
+                    <div>
+                      <label htmlFor="currentPassword" className={labelClass}>
+                        Senha atual
+                      </label>
+                      <input
+                        type="password"
+                        id="currentPassword"
+                        name="currentPassword"
+                        autoComplete="current-password"
+                        value={pwForm.currentPassword}
+                        onChange={(e) =>
+                          setPwForm({ ...pwForm, currentPassword: e.target.value })
+                        }
+                        required
+                        className={inputClass}
+                      />
+                    </div>
+
+                    <div>
+                      <label htmlFor="newPassword" className={labelClass}>
+                        Nova senha
+                      </label>
+                      <input
+                        type="password"
+                        id="newPassword"
+                        name="newPassword"
+                        autoComplete="new-password"
+                        value={pwForm.newPassword}
+                        onChange={(e) =>
+                          setPwForm({ ...pwForm, newPassword: e.target.value })
+                        }
+                        required
+                        minLength={8}
+                        className={inputClass}
+                      />
+                      <PasswordStrength password={pwForm.newPassword} />
+                    </div>
+
+                    <div>
+                      <label htmlFor="confirmNewPassword" className={labelClass}>
+                        Confirmar nova senha
+                      </label>
+                      <input
+                        type="password"
+                        id="confirmNewPassword"
+                        name="confirmNewPassword"
+                        autoComplete="new-password"
+                        value={pwForm.confirmNewPassword}
+                        onChange={(e) =>
+                          setPwForm({ ...pwForm, confirmNewPassword: e.target.value })
+                        }
+                        required
+                        className={inputClass}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-end gap-3 pt-2">
+                      <button
+                        type="submit"
+                        disabled={pwSaving}
+                        className="rounded-xl bg-white px-5 py-2.5 text-sm font-bold text-black transition-all hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {pwSaving ? "Alterando..." : "Alterar senha"}
+                      </button>
+                    </div>
+                  </form>
                 </div>
 
                 <div className="rounded-2xl border border-red-500/10 bg-red-500/5 p-6 backdrop-blur-sm">
