@@ -7,7 +7,9 @@ export function middleware(request: NextRequest) {
   const isProtected = PROTECTED_PATHS.some((p) => pathname === p || pathname.startsWith(p + "/"));
 
   if (isProtected) {
-    const sessionToken = request.cookies.get("better-auth.session_token");
+    const sessionToken = 
+      request.cookies.get("better-auth.session_token") || 
+      request.cookies.get("__Secure-better-auth.session_token");
     if (!sessionToken) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
