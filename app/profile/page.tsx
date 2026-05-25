@@ -741,7 +741,7 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </main>
+      </div>
       
       <MobileNav activePage="profile" />
     </div>
