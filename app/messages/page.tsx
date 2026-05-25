@@ -13,7 +13,7 @@ import { api } from "../../lib/api";
 function MessagesContent() {
   const router = useRouter();
   const { user, sessionLoaded } = useAuthStore();
-  const { setConversations, setActiveConversationId } = useChatStore();
+  const { setConversations, setActiveConversationId, activeConversationId } = useChatStore();
   const searchParams = useSearchParams();
   const targetUserId = searchParams.get("userId");
 
