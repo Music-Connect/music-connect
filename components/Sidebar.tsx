@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import MobileNav from "./MobileNav";
 import { BarChart2, FileText, Search, User, Settings, ArrowUpRight, Newspaper, MessageSquare } from "lucide-react";
 
 interface SidebarProps {
@@ -120,9 +121,6 @@ export default function Sidebar({
         </div>
       </aside>
 
-import MobileNav from "./MobileNav";
-
-// ... código abaixo
       {/* Mobile Bottom Nav */}
       <MobileNav activePage={activePage} />
     </>
