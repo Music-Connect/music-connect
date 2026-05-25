@@ -51,7 +51,19 @@ function MessagesContent() {
         loadingRef.current = false;
       }
     };
+    
     loadData();
+    
+    const intervalId = setInterval(async () => {
+      try {
+        const convs = await api.getConversations();
+        setConversations(convs);
+      } catch (e) {
+        // Ignorar erros no polling
+      }
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, [setConversations, setActiveConversationId, targetUserId, user]);
 
   const handleLogout = async () => {

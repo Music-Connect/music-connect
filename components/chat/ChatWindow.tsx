@@ -16,13 +16,20 @@ export default function ChatWindow() {
   const activeMessages = activeConversationId ? (messages[activeConversationId] || []) : [];
   const otherUser = activeConvo?.users.find(u => u.id !== currentUser?.id);
 
-  // Load messages from API when conversation changes
+  // Load messages from API when conversation changes and poll for new ones
   useEffect(() => {
-    if (activeConversationId) {
+    if (!activeConversationId) return;
+
+    const fetchMessages = () => {
       api.getMessages(activeConversationId)
         .then(data => setMessages(activeConversationId, data))
         .catch(console.error);
-    }
+    };
+
+    fetchMessages();
+    const intervalId = setInterval(fetchMessages, 3000);
+
+    return () => clearInterval(intervalId);
   }, [activeConversationId, setMessages]);
 
   useEffect(() => {
