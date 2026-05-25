@@ -636,4 +636,17 @@ export const api = {
     const result = await response.json();
     return result.data || [];
   },
+  // ── Upload ──
+  async uploadFile(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const response = await fetch(`${API_BASE_URL}/api/uploads`, {
+      method: "POST",
+      credentials: "include",
+      body: formData,
+    });
+    if (!response.ok) throw new Error("Erro ao enviar arquivo");
+    const result = await response.json();
+    return result.data.url;
+  },
 };

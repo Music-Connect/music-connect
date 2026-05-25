@@ -31,7 +31,8 @@ export default function ConversationList() {
         ) : (
           conversations.map((convo) => {
             // Find the OTHER user, not ourselves
-            const otherUser = convo.users.find(u => u.id !== currentUser?.id) || convo.users[0];
+            const users = convo.users || [];
+            const otherUser = users.find(u => u.id !== currentUser?.id) || users[0];
             const lastMessage = convo.messages?.[0];
             const isActive = activeConversationId === convo.id;
 

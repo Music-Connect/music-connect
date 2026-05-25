@@ -60,9 +60,9 @@ export default function ChatWindow() {
   }
 
   return (
-    <div className="flex h-full flex-col bg-bg">
+    <div className="flex h-full w-full flex-col bg-bg overflow-hidden min-h-0">
       {/* Header */}
-      <div className="flex items-center gap-3 border-b border-border bg-bg/80 px-6 py-4 backdrop-blur-md">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border bg-bg/80 px-6 py-4 backdrop-blur-md">
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-purple-600 font-bold text-white">
           {otherUser?.name.substring(0, 2).toUpperCase() || "U"}
         </div>
@@ -97,7 +97,7 @@ export default function ChatWindow() {
       </div>
 
       {/* Input */}
-      <div className="border-t border-border bg-bg p-4">
+      <div className="shrink-0 border-t border-border bg-bg p-4">
         <form onSubmit={handleSend} className="relative flex items-center">
           <input
             type="text"

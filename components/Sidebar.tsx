@@ -21,7 +21,7 @@ export default function Sidebar({
   };
 
   return (
-    <aside className="relative hidden w-72 md:flex flex-col px-6 py-7 border-r border-border bg-bg/80 backdrop-blur-xl">
+    <aside className="relative hidden w-72 md:flex flex-col px-6 py-7 border-r border-border bg-bg/80 backdrop-blur-xl overflow-y-auto [&::-webkit-scrollbar]:hidden">
       {/* Top gradient glow */}
       <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-linear-to-b from-rose-500/[0.07] via-transparent to-transparent" />
 

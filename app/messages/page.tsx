@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect } from "react";
+import { Suspense, useEffect, useRef } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Sidebar from "@/components/Sidebar";
 import ConversationList from "../../components/chat/ConversationList";
@@ -23,9 +23,14 @@ function MessagesContent() {
     }
   }, [sessionLoaded, user, router]);
 
+  const loadingRef = useRef(false);
+
   useEffect(() => {
     if (!user) return;
+    if (loadingRef.current) return;
+    
     const loadData = async () => {
+      loadingRef.current = true;
       try {
         let convs = await api.getConversations();
         
@@ -42,6 +47,8 @@ function MessagesContent() {
         setConversations(convs);
       } catch (e) {
         console.error("Erro ao carregar conversas:", e);
+      } finally {
+        loadingRef.current = false;
       }
     };
     loadData();
@@ -64,14 +71,14 @@ function MessagesContent() {
         onLogout={handleLogout}
       />
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden h-full">
         {/* Conversation list */}
-        <div className="w-full md:w-[320px] lg:w-[360px] shrink-0">
+        <div className="w-full md:w-[320px] lg:w-[360px] shrink-0 h-full border-r border-border">
           <ConversationList />
         </div>
 
         {/* Chat window */}
-        <div className="hidden flex-1 md:flex">
+        <div className="hidden flex-1 md:flex flex-col h-full w-full">
           <ChatWindow />
         </div>
       </div>

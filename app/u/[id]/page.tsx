@@ -238,13 +238,10 @@ export default function PublicProfilePage() {
           <div className="relative h-36 w-36 rounded-full bg-linear-to-br from-amber-300 via-rose-400 to-fuchsia-500 p-1 shadow-2xl shadow-rose-500/10 shrink-0">
             <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-900 text-4xl font-bold text-white border-4 border-black overflow-hidden">
               {profileUser.image ? (
-                <Image
+                <img
                   src={profileUser.image}
                   alt={profileUser.name}
-                  width={160}
-                  height={160}
                   className="w-full h-full object-cover"
-                  priority
                 />
               ) : (
                 profileUser.name.substring(0, 2).toUpperCase()
@@ -525,15 +522,25 @@ export default function PublicProfilePage() {
               )}
 
               {/* Media grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="aspect-video rounded-2xl border border-dashed border-zinc-800/60 bg-zinc-900/30 flex items-center justify-center text-zinc-700"
-                  >
-                    Mídia do Usuário
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                {profileUser.portfolio && profileUser.portfolio.length > 0 ? (
+                  profileUser.portfolio.map((url, i) => (
+                    <div
+                      key={i}
+                      className="group relative aspect-square rounded-2xl overflow-hidden border border-zinc-800/60 bg-zinc-900/30"
+                    >
+                      <img 
+                        src={url} 
+                        alt={`Portfolio ${i}`} 
+                        className="w-full h-full object-cover" 
+                      />
+                    </div>
+                  ))
+                ) : (
+                  <div className="col-span-full py-10 text-center text-zinc-500 text-sm border border-dashed border-zinc-800/60 rounded-2xl">
+                    Nenhuma mídia no portfólio ainda.
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>

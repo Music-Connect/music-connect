@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -83,6 +83,11 @@ export default function ProfilePage() {
     loadUser();
   }, [storeUser, sessionLoaded, router]);
 
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadingProfilePic, setUploadingProfilePic] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const profilePicInputRef = useRef<HTMLInputElement>(null);
+
   const handleSave = async () => {
     if (!user || !storeUser) return;
     setSaving(true);
@@ -108,6 +113,58 @@ export default function ProfilePage() {
       alert(message);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !storeUser) return;
+
+    setUploadingImage(true);
+    try {
+      const url = await api.uploadFile(file);
+      const newPortfolio = [...(user.portfolio || []), url];
+      const updatedUser = await api.updateUser(storeUser.id, { portfolio: newPortfolio });
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Upload error:", error);
+      alert("Erro ao enviar imagem");
+    } finally {
+      setUploadingImage(false);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    }
+  };
+
+  const handleDeleteImage = async (imageUrl: string) => {
+    if (!user || !storeUser) return;
+    if (!confirm("Tem certeza que deseja excluir esta imagem?")) return;
+
+    try {
+      const newPortfolio = (user.portfolio || []).filter(url => url !== imageUrl);
+      const updatedUser = await api.updateUser(storeUser.id, { portfolio: newPortfolio });
+      setUser(updatedUser);
+    } catch (error) {
+      console.error("Delete error:", error);
+      alert("Erro ao excluir imagem");
+    }
+  };
+
+  const handleProfilePicUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !user || !storeUser) return;
+
+    setUploadingProfilePic(true);
+    try {
+      const url = await api.uploadFile(file);
+      const updatedUser = await api.updateUser(storeUser.id, { image: url });
+      setUser(updatedUser);
+      // O useAuthStore não é atualizado automaticamente aqui, mas a tela recarregará com o dado local.
+    } catch (error) {
+      console.error("Profile pic upload error:", error);
+      alert("Erro ao enviar foto de perfil");
+    } finally {
+      setUploadingProfilePic(false);
+      if (profilePicInputRef.current) profilePicInputRef.current.value = "";
     }
   };
 
@@ -154,10 +211,12 @@ export default function ProfilePage() {
               <Settings size={14} /> Configurações
             </button>
             <div className="relative h-9 w-9 rounded-full bg-linear-to-br from-amber-300 via-rose-400 to-fuchsia-500 p-0.5 shadow-lg shadow-rose-500/10">
-              <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-900 text-xs font-bold text-white">
-                {displayName
-                  ? displayName.substring(0, 2).toUpperCase()
-                  : "U"}
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-900 text-xs font-bold text-white overflow-hidden">
+                {user.image ? (
+                  <img src={user.image} alt="Avatar" className="w-full h-full object-cover" />
+                ) : (
+                  displayName ? displayName.substring(0, 2).toUpperCase() : "U"
+                )}
               </div>
             </div>
           </div>
@@ -176,21 +235,43 @@ export default function ProfilePage() {
       <div className="relative z-10 mx-auto max-w-5xl px-4 sm:px-6">
         <div className="fade-in-up -mt-20 flex flex-col sm:flex-row items-center sm:items-end gap-6 pb-8 border-b border-zinc-800/50">
           {/* Avatar */}
-          <div className="relative h-36 w-36 rounded-full bg-linear-to-br from-amber-300 via-rose-400 to-fuchsia-500 p-1 shadow-2xl shadow-rose-500/10 shrink-0">
-            <div className="flex h-full w-full items-center justify-center rounded-full bg-zinc-900 text-4xl font-bold text-white border-4 border-black overflow-hidden">
+          <div className="relative h-36 w-36 rounded-full bg-linear-to-br from-amber-300 via-rose-400 to-fuchsia-500 p-1 shadow-2xl shadow-rose-500/10 shrink-0 group">
+            <div className="relative flex h-full w-full items-center justify-center rounded-full bg-zinc-900 text-4xl font-bold text-white border-4 border-black overflow-hidden">
               {user.image ? (
-                <Image
+                <img
                   src={user.image}
                   alt={displayName}
-                  width={160}
-                  height={160}
                   className="w-full h-full object-cover"
-                  priority
                 />
               ) : (
                 displayName.substring(0, 2).toUpperCase()
               )}
+
+              {isEditing && (
+                <div 
+                  onClick={() => profilePicInputRef.current?.click()}
+                  className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                >
+                  {uploadingProfilePic ? (
+                    <span className="text-xs">Enviando...</span>
+                  ) : (
+                    <>
+                      <span className="text-2xl mb-1">+</span>
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-zinc-300">Alterar</span>
+                    </>
+                  )}
+                </div>
+              )}
             </div>
+            {isEditing && (
+              <input
+                type="file"
+                ref={profilePicInputRef}
+                onChange={handleProfilePicUpload}
+                accept="image/*"
+                className="hidden"
+              />
+            )}
           </div>
 
           {/* Name + meta */}
@@ -590,20 +671,70 @@ export default function ProfilePage() {
                 className="fade-in-up space-y-4"
                 style={{ animationDelay: "160ms" }}
               >
-                <p className="text-sm text-zinc-500">
-                  Adicione seus trabalhos e projetos aqui.
-                </p>
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-zinc-500">
+                    Adicione seus trabalhos e projetos aqui.
+                  </p>
+                  {isEditing && (
+                    <>
+                      <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        onChange={handleFileUpload} 
+                        accept="image/*" 
+                        className="hidden" 
+                      />
+                      <button 
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={uploadingImage}
+                        className="rounded-lg bg-rose-500/10 px-3 py-1.5 text-xs font-semibold text-rose-400 hover:bg-rose-500/20 disabled:opacity-50"
+                      >
+                        {uploadingImage ? "Enviando..." : "+ Nova Foto"}
+                      </button>
+                    </>
+                  )}
+                </div>
+
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                  {[1, 2, 3].map((i) => (
+                  {user.portfolio && user.portfolio.length > 0 ? (
+                    user.portfolio.map((url, i) => (
+                      <div
+                        key={i}
+                        className="group relative aspect-square rounded-2xl overflow-hidden border border-zinc-800/60 bg-zinc-900/30"
+                      >
+                        <img 
+                          src={url} 
+                          alt={`Portfolio ${i}`} 
+                          className="w-full h-full object-cover" 
+                        />
+                        {isEditing && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={() => handleDeleteImage(url)}
+                              className="rounded-full bg-red-500/20 p-2 text-red-500 hover:bg-red-500 hover:text-white transition-colors"
+                            >
+                              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    ))
+                  ) : (
+                    <div className="col-span-full py-10 text-center text-zinc-500 text-sm border border-dashed border-zinc-800/60 rounded-2xl">
+                      Nenhuma mídia no portfólio ainda.
+                    </div>
+                  )}
+
+                  {isEditing && (
                     <div
-                      key={i}
-                      className="group aspect-square cursor-pointer rounded-2xl border border-dashed border-zinc-800/60 bg-zinc-900/30 flex items-center justify-center transition-all hover:border-zinc-700 hover:bg-zinc-900/50"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="group aspect-square cursor-pointer rounded-2xl border border-dashed border-zinc-800/60 bg-zinc-900/30 flex flex-col items-center justify-center transition-all hover:border-zinc-700 hover:bg-zinc-900/50"
                     >
                       <span className="text-2xl text-zinc-700 group-hover:text-zinc-500 transition-colors">
                         +
                       </span>
                     </div>
-                  ))}
+                  )}
                 </div>
               </div>
             )}
