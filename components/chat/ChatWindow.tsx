@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { Send } from "lucide-react";
+import { Send, ArrowLeft } from "lucide-react";
 import { useChatStore } from "../../lib/store/useChatStore";
 import { api } from "../../lib/api";
 import { useAuthStore } from "../../lib/store";
 
 export default function ChatWindow() {
   const [inputText, setInputText] = useState("");
-  const { activeConversationId, conversations, messages, addMessage, setMessages } = useChatStore();
+  const { activeConversationId, conversations, messages, addMessage, setMessages, setActiveConversationId } = useChatStore();
   const { user: currentUser } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -62,7 +62,13 @@ export default function ChatWindow() {
   return (
     <div className="flex h-full w-full flex-col bg-bg overflow-hidden min-h-0">
       {/* Header */}
-      <div className="flex shrink-0 items-center gap-3 border-b border-border bg-bg/80 px-6 py-4 backdrop-blur-md">
+      <div className="flex shrink-0 items-center gap-3 border-b border-border bg-bg/80 px-4 md:px-6 py-4 backdrop-blur-md">
+        <button 
+          onClick={() => setActiveConversationId(null)}
+          className="md:hidden mr-1 text-fg-muted hover:text-fg p-2 -ml-2 rounded-full hover:bg-bg-elevated"
+        >
+          <ArrowLeft size={20} />
+        </button>
         <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-indigo-500 to-purple-600 font-bold text-white">
           {otherUser?.name.substring(0, 2).toUpperCase() || "U"}
         </div>

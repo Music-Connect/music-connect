@@ -71,14 +71,14 @@ function MessagesContent() {
         onLogout={handleLogout}
       />
 
-      <div className="flex flex-1 overflow-hidden h-full">
+      <div className="flex flex-1 overflow-hidden h-full pb-16 md:pb-0">
         {/* Conversation list */}
-        <div className="w-full md:w-[320px] lg:w-[360px] shrink-0 h-full border-r border-border">
+        <div className={`w-full md:w-[320px] lg:w-[360px] shrink-0 h-full border-r border-border ${activeConversationId ? 'hidden md:block' : 'block'}`}>
           <ConversationList />
         </div>
 
         {/* Chat window */}
-        <div className="hidden flex-1 md:flex flex-col h-full w-full">
+        <div className={`flex-1 h-full min-w-0 ${activeConversationId ? 'flex' : 'hidden md:flex'}`}>
           <ChatWindow />
         </div>
       </div>
