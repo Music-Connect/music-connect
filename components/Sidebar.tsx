@@ -120,21 +120,11 @@ export default function Sidebar({
         </div>
       </aside>
 
+import MobileNav from "./MobileNav";
+
+// ... código abaixo
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 h-[68px] bg-bg/90 backdrop-blur-2xl border-t border-border flex items-center justify-around px-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.5)]">
-        <MobileNavItem icon={<Newspaper size={22} />} active={activePage === "feed"} onClick={() => navigate("/feed")} label="Feed" />
-        <MobileNavItem icon={<Search size={22} />} active={activePage === "explore"} onClick={() => navigate("/explore")} label="Buscar" />
-        <div className="relative -top-5">
-          <div 
-            onClick={() => navigate("/dashboard")}
-            className="w-14 h-14 bg-linear-to-tr from-amber-500 to-rose-500 rounded-full flex items-center justify-center shadow-lg shadow-rose-500/30 cursor-pointer active:scale-95 transition-transform"
-          >
-            <BarChart2 size={24} className="text-white" />
-          </div>
-        </div>
-        <MobileNavItem icon={<MessageSquare size={22} />} active={activePage === "messages"} onClick={() => navigate("/messages")} label="Chat" />
-        <MobileNavItem icon={<User size={22} />} active={activePage === "profile"} onClick={() => navigate("/profile")} label="Perfil" />
-      </nav>
+      <MobileNav activePage={activePage} />
     </>
   );
 }
@@ -162,25 +152,6 @@ function NavItem({ children, icon, active }: NavItemProps) {
       {active && (
         <span className="h-1.5 w-1.5 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.4)]" />
       )}
-    </div>
-  );
-}
-
-/* ── MobileNavItem ── */
-interface MobileNavItemProps {
-  icon: React.ReactNode;
-  active?: boolean;
-  onClick: () => void;
-  label: string;
-}
-
-function MobileNavItem({ icon, active, onClick, label }: MobileNavItemProps) {
-  return (
-    <div onClick={onClick} className={`flex flex-col items-center justify-center w-14 h-full cursor-pointer transition-colors ${active ? "text-amber-400" : "text-fg-muted hover:text-fg"}`}>
-      <div className={`flex items-center justify-center mb-1 ${active ? "animate-bounce" : ""}`}>
-        {icon}
-      </div>
-      <span className="text-[10px] font-medium">{label}</span>
     </div>
   );
 }

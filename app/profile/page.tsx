@@ -8,6 +8,7 @@ import { api, User } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
 import { authClient } from "@/lib/auth-client";
 import BackButton from "@/components/BackButton";
+import MobileNav from "@/components/MobileNav";
 import { ProfileSkeleton } from "@/components/Skeleton";
 import {
   BarChart2,
@@ -740,7 +741,9 @@ export default function ProfilePage() {
             )}
           </div>
         </div>
-      </div>
+      </main>
+      
+      <MobileNav activePage="profile" />
     </div>
   );
 }

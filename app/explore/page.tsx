@@ -7,6 +7,7 @@ import Image from "next/image";
 import { api, User } from "@/lib/api";
 import { useAuthStore } from "@/lib/store";
 import BackButton from "@/components/BackButton";
+import MobileNav from "@/components/MobileNav";
 import {
   Search,
   BarChart2,
@@ -517,6 +518,8 @@ function ExploreContent() {
           </div>
         </div>
       )}
+
+      {isLoggedIn && <MobileNav activePage="explore" />}
     </div>
   );
 }

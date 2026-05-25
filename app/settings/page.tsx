@@ -8,6 +8,7 @@ import { authClient } from "@/lib/auth-client";
 import { useAuthStore } from "@/lib/store";
 import { useTheme, type Theme } from "@/lib/theme";
 import BackButton from "@/components/BackButton";
+import MobileNav from "@/components/MobileNav";
 import PasswordStrength, { evaluatePassword } from "@/components/PasswordStrength";
 import { SettingsSkeleton } from "@/components/Skeleton";
 import { BarChart2, User as UserIcon, Lock, Bell, AlertTriangle, CheckCircle2, Palette, Sun, Moon, Monitor } from "lucide-react";
@@ -557,6 +558,8 @@ export default function SettingsPage() {
           </div>
         </div>
       </div>
+
+      <MobileNav activePage="settings" />
     </div>
   );
 }
