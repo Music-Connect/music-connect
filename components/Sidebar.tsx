@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { BarChart2, FileText, Search, User, Settings, ArrowUpRight, Newspaper } from "lucide-react";
+import { BarChart2, FileText, Search, User, Settings, ArrowUpRight, Newspaper, MessageSquare } from "lucide-react";
 
 interface SidebarProps {
   isArtist: boolean;
@@ -71,6 +71,12 @@ export default function Sidebar({
           <div onClick={() => navigate("/proposals")}>
             <NavItem icon={<FileText size={16} />} active={activePage === "proposals"}>
               {isArtist ? "Propostas" : "Minhas Contratações"}
+            </NavItem>
+          </div>
+
+          <div onClick={() => navigate("/messages")}>
+            <NavItem icon={<MessageSquare size={16} />} active={activePage === "messages"}>
+              Mensagens
             </NavItem>
           </div>
 

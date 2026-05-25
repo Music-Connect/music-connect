@@ -1,6 +1,8 @@
 "use client";
 
-import { Search, Bell } from "lucide-react";
+import { useState } from "react";
+import { Search } from "lucide-react";
+import NotificationDropdown from "./NotificationDropdown";
 
 interface HeaderProps {
   user?: {
@@ -9,19 +11,27 @@ interface HeaderProps {
   userType?: string;
   searchTerm?: string;
   onSearchChange?: (value: string) => void;
-  onSearch?: () => void;
 }
+
+import { useRouter } from "next/navigation";
 
 export default function Header({
   user,
   userType,
-  searchTerm,
+  searchTerm: externalSearchTerm,
   onSearchChange,
-  onSearch,
 }: HeaderProps = {}) {
+  const router = useRouter();
+  const [localSearch, setLocalSearch] = useState(externalSearchTerm || "");
+
+  const handleSearchChange = (val: string) => {
+    setLocalSearch(val);
+    if (onSearchChange) onSearchChange(val);
+  };
+
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Enter" && onSearch) {
-      onSearch();
+    if (e.key === "Enter" && localSearch.trim()) {
+      router.push(`/explore?search=${encodeURIComponent(localSearch)}`);
     }
   };
 
@@ -36,9 +46,9 @@ export default function Header({
           <input
             type="text"
             placeholder="Buscar artistas, gêneros..."
-            value={searchTerm || ""}
-            onChange={(e) => onSearchChange?.(e.target.value)}
-            onKeyPress={handleKeyPress}
+            value={localSearch}
+            onChange={(e) => handleSearchChange(e.target.value)}
+            onKeyDown={handleKeyPress}
             className="w-full rounded-xl border border-border bg-bg-input py-2.5 pl-10 pr-4 text-sm text-fg placeholder-fg-subtle outline-none transition-all duration-200 focus:border-border-strong focus:bg-bg-elevated focus:ring-1 focus:ring-border-strong"
           />
         </div>
@@ -46,11 +56,8 @@ export default function Header({
 
       {/* User Area */}
       <div className="flex items-center gap-4">
-        {/* Notification bell */}
-        <button className="relative flex h-9 w-9 items-center justify-center rounded-xl border border-border bg-bg-card text-fg-muted transition-all hover:border-border-strong hover:text-fg">
-          <Bell size={16} />
-          <span className="absolute -right-0.5 -top-0.5 h-2 w-2 rounded-full bg-rose-500 ring-2 ring-bg" />
-        </button>
+        {/* Notification Dropdown */}
+        <NotificationDropdown />
 
         {/* Separator */}
         <div className="h-8 w-px bg-border" />

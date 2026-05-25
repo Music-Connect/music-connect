@@ -138,6 +138,22 @@ export interface CursorMeta {
   hasMore: boolean;
 }
 
+export interface Message {
+  id: string;
+  conversationId: string;
+  senderId: string;
+  content: string;
+  isRead: boolean;
+  created_at: string;
+}
+
+export interface Conversation {
+  id: string;
+  updated_at: string;
+  users: { id: string; name: string; image: string | null; tipo_usuario: string }[];
+  messages: Message[];
+}
+
 export interface ArtistaRecomendado {
   id: string;
   name: string;
@@ -154,17 +170,17 @@ export interface ArtistaRecomendado {
 export const api = {
   // Users
   async getUsers(search?: string): Promise<User[]> {
-    const params = new URLSearchParams({ limit: "50" });
-    if (search) params.append("local", search);
+    const params = new URLSearchParams();
+    if (search) params.append("q", search);
 
-    const response = await fetch(`${API_BASE_URL}/api/artistas?${params}`, {
+    const response = await fetch(`${API_BASE_URL}/api/search?${params}`, {
       credentials: "include",
     });
 
     if (!response.ok) throw new Error("Erro ao buscar usuários");
 
     const data = await response.json();
-    return data.data || [];
+    return data || [];
   },
 
   async getUserById(id: string): Promise<User> {
@@ -201,6 +217,63 @@ export const api = {
 
     const result = await response.json();
     return result.data;
+  },
+
+  // Follows
+  async followUser(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}/follow`, {
+      method: "POST",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Erro ao seguir usuário");
+  },
+
+  async unfollowUser(id: string): Promise<void> {
+    const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}/follow`, {
+      method: "DELETE",
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Erro ao deixar de seguir usuário");
+  },
+
+  async getFollowers(id: string): Promise<User[]> {
+    const response = await fetch(`${API_BASE_URL}/api/usuarios/${id}/followers`, {
+      credentials: "include",
+    });
+    if (!response.ok) throw new Error("Erro ao buscar seguidores");
+    return response.json();
+  },
+
+  // ── Chat ──
+  async getConversations(): Promise<Conversation[]> {
+    const response = await fetch(`${API_BASE_URL}/api/chat/conversations`, { credentials: "include" });
+    if (!response.ok) throw new Error("Erro ao buscar conversas");
+    return response.json();
+  },
+  async getMessages(conversationId: string): Promise<Message[]> {
+    const response = await fetch(`${API_BASE_URL}/api/chat/conversations/${conversationId}/messages`, { credentials: "include" });
+    if (!response.ok) throw new Error("Erro ao buscar mensagens");
+    return response.json();
+  },
+  async createConversation(participantId: string): Promise<Conversation> {
+    const response = await fetch(`${API_BASE_URL}/api/chat/conversations`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ participantId }),
+    });
+    if (!response.ok) throw new Error("Erro ao criar conversa");
+    return response.json();
+  },
+  async sendMessage(conversationId: string, content: string): Promise<Message> {
+    const response = await fetch(`${API_BASE_URL}/api/chat/conversations/${conversationId}/messages`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ content }),
+    });
+    if (!response.ok) throw new Error("Erro ao enviar mensagem");
+    return response.json();
   },
 
   // Artistas

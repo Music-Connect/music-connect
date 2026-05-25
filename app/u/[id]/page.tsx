@@ -24,6 +24,7 @@ import {
   FileText,
   User as UserIcon,
   X,
+  MessageSquare,
 } from "lucide-react";
 
 const inputClass =
@@ -39,6 +40,8 @@ export default function PublicProfilePage() {
   const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [sending, setSending] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(false);
+  const [followersCount, setFollowersCount] = useState(0);
   const [proposalForm, setProposalForm] = useState({
     titulo: "",
     descricao: "",
@@ -53,10 +56,26 @@ export default function PublicProfilePage() {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const user = await api.getUserById(userId);
-        setProfileUser(user);
-      } catch (error) {
-        console.error("Erro ao buscar usuário:", error);
+        const userData = await api.getUserById(userId);
+        
+        if (!userData) {
+          return;
+        }
+
+        setProfileUser(userData);
+        
+        // Fetch followers
+        try {
+          const followers = await api.getFollowers(userId);
+          setFollowersCount(followers.length);
+          if (currentUser) {
+            setIsFollowing(followers.some(f => f.id === currentUser.id));
+          }
+        } catch (e) {
+          console.error("Erro ao buscar followers:", e);
+        }
+      } catch (err: any) {
+        console.error("Erro ao buscar usuário:", err);
       } finally {
         setLoading(false);
       }
@@ -243,11 +262,17 @@ export default function PublicProfilePage() {
             </p>
             {/* Estrelas de Avaliação (Apenas Leitura) */}
           {isArtistProfile && (
-            <div className="mt-2 flex items-center justify-center sm:justify-start gap-2">
-              <StarRating rating={Math.round(profileUser.media_avaliacoes || 0)} readOnly size={16} />
-              <span className="text-xs text-zinc-500">
-                ({profileUser.total_avaliacoes || 0} avaliações)
-              </span>
+            <div className="mt-2 flex flex-col sm:flex-row items-center justify-center sm:justify-start gap-4">
+              <div className="flex items-center gap-2">
+                <StarRating rating={Math.round(profileUser.media_avaliacoes || 0)} readOnly size={16} />
+                <span className="text-xs text-zinc-500">
+                  ({profileUser.total_avaliacoes || 0} avaliações)
+                </span>
+              </div>
+              <div className="hidden sm:block h-1 w-1 rounded-full bg-zinc-700"></div>
+              <div className="text-xs font-semibold text-zinc-300">
+                <span className="text-white">{followersCount}</span> Seguidores
+              </div>
             </div>
           )}
             <div className="mt-3 flex flex-wrap items-center gap-2 justify-center sm:justify-start">
@@ -267,6 +292,44 @@ export default function PublicProfilePage() {
 
           {/* Actions */}
           <div className="flex items-center gap-3 shrink-0">
+            {isLoggedIn && !isOwnProfile && (
+              <button
+                onClick={async () => {
+                  const wasFollowing = isFollowing;
+                  setIsFollowing(!wasFollowing);
+                  setFollowersCount(c => wasFollowing ? c - 1 : c + 1);
+                  try {
+                    if (wasFollowing) {
+                      await api.unfollowUser(profileUser.id);
+                    } else {
+                      await api.followUser(profileUser.id);
+                    }
+                  } catch (e) {
+                    setIsFollowing(wasFollowing);
+                    setFollowersCount(c => wasFollowing ? c + 1 : c - 1);
+                    alert("Erro ao alterar o seguir.");
+                  }
+                }}
+                className={`rounded-xl px-5 py-2.5 text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] ${
+                  isFollowing 
+                    ? "border border-zinc-700 bg-zinc-800 text-white" 
+                    : "bg-rose-500 text-white shadow-lg shadow-rose-500/20"
+                }`}
+              >
+                {isFollowing ? "Seguindo" : "Seguir"}
+              </button>
+            )}
+
+            {isLoggedIn && !isOwnProfile && (
+              <button
+                onClick={() => router.push(`/messages?userId=${profileUser.id}`)}
+                className="flex items-center gap-2 rounded-xl border border-zinc-700 bg-zinc-800/80 px-5 py-2.5 text-sm font-bold text-white transition-all hover:bg-zinc-700 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                <MessageSquare size={16} />
+                Mensagem
+              </button>
+            )}
+            
             {isOwnProfile && (
               <button
                 onClick={() => router.push("/profile")}

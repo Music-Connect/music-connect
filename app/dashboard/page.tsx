@@ -260,12 +260,9 @@ export default function DashboardPage() {
       />
 
       <main className="flex-1 flex flex-col relative overflow-y-auto scrollbar-hide">
-        <Header
-          user={user}
-          userType={userType}
-          searchTerm={searchTerm}
-          onSearchChange={setSearchTerm}
-          onSearch={handleSearch}
+        <Header 
+          user={user} 
+          userType={userType} 
         />
 
         <div className="p-6 lg:p-8 space-y-8">
